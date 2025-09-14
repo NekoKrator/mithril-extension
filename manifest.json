@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Activity Analytics",
+  "version": "1.0.0",
+  "action": { "default_popup": "./src/popup.html" },
+  "options_page": "./src/options.html",
+  "permissions": ["storage", "tabs", "idle", "alarms"],
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "service_worker": "./src/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "exclude_matches": ["https://chromewebstore.google.com//*/*"],
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["./src/scripts/content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

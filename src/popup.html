@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <title>Activity Analytics</title>
+    <script></script>
+  </head>
+  <body>
+    <div class="popup">
+      <header class="popup__header">
+        <h2 class="header__title">Activity Analytics</h2>
+      </header>
+
+      <main class="popup__main">
+        <!-- 1 -->
+        <div class="main__control">
+          <button class="main__button button__toggle">Start Analytics</button>
+          <p class="control-help">
+            Click 'Start' to begin collecting analytics"
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="main__display-info">
+          <div class="display-info__time">
+            <label class="display-info__lable label-time"
+              >All the time you spent today in the browser</label
+            >
+            <div class="display-info display-time">
+              You haven't used your browser yet today!
+            </div>
+          </div>
+
+          <div class="display-info__tab-time">
+            <label class="display-info__lable label-tab-time"
+              >Time you spent today in this tab</label
+            >
+            <div class="display-info display-tab-time">
+              Click 'Start' to begin collecting analytics
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="main__utils">
+          <button class="main__button button__del">Delete Data</button>
+          <button class="main__button button__get">Get Data</button>
+        </div>
+      </main>
+
+      <footer>
+        <a href="options.html" target="_blank">Options</a>
+      </footer>
+    </div>
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>
