@@ -3,8 +3,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const statusDiv = document.getElementById('status');
   const saveButton = document.getElementById('save');
 
+  const idleThreshold = document.getElementById('idleThreshold');
+  const saveidleThresholdBtn = document.getElementById('btn-idle');
+  const idleTimeStatus = document.getElementById('idleTimeStatus');
+
   chrome.storage.sync.get({ featureEnabled: false }, function (data) {
     featureEnabledCheckbox.checked = data.featureEnabled;
+  });
+
+  chrome.storage.sync.get({ idleThreshold }, function (data) {
+    idleTimeStatus.textContent = data.idleThreshold;
   });
 
   saveButton.addEventListener('click', function () {
@@ -16,5 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
         window.close();
       }, 1500);
     });
+  });
+
+  saveidleThresholdBtn.addEventListener('click', function () {
+    const idleTime = idleThreshold.value;
+    chrome.storage.sync.set({ idleThreshold: idleTime });
   });
 });
