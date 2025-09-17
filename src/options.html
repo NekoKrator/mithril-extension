@@ -4,14 +4,25 @@
     <title>My Opt-In Extension Options</title>
   </head>
   <body>
-    <div>
-      <label
-        ><input id="featureEnabled" type="checkbox" /> Allow data collection?
-        (opt-in)</label
-      >
-    </div>
-    <button id="save">Save</button>
-    <div id="status"></div>
+    <main class="options">
+      <section>
+        <div>
+          <label
+            ><input id="featureEnabled" type="checkbox" /> Allow data
+            collection? (opt-in)</label
+          >
+        </div>
+        <button id="save">Save</button>
+        <div id="status"></div>
+      </section>
+
+      <section>
+        <label><input id="idleThreshold" />Select idle threshold</label>
+        <div>Now is: <span id="idleTimeStatus">0</span></div>
+        <button id="btn-idle">Save</button>
+      </section>
+    </main>
+
     <script src="options.js"></script>
   </body>
 </html>
