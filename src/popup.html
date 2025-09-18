@@ -9,57 +9,108 @@
   <body>
     <div class="popup">
       <header class="popup__header">
-        <div class="header__status">ACTIVE</div>
         <h2 class="header__title">Activity Analytics</h2>
+        <div class="header__status">ACTIVE</div>
       </header>
 
-      <main class="popup__main">
-        <!-- 1 -->
-        <section class="main__control">
-          <button type="button" class="main__button button__toggle">
-            Start Analytics
-          </button>
-          <p class="control__help">
-            Click 'Start' to begin collecting analytics
-          </p>
-        </section>
+      <nav class="tabs">
+        <ul class="tabs__list">
+          <li class="tab tab__home active" data-tab="home">Home</li>
+          <li class="tab tab__statistics" data-tab="statistics">Statistics</li>
+          <li class="tab tab__options" data-tab="options">Options</li>
+        </ul>
+      </nav>
 
-        <!-- 2 -->
-        <section class="main__display-info">
-          <div class="display-info__time">
-            <label class="display-info__label label-time">
-              All the time you spent today in the browser
-            </label>
-            <div class="display-info display-time">There is no data yet</div>
+      <main class="popup__main">
+        <!-- Home -->
+        <section class="tab-content tab-content__home active">
+          <!-- 1 -->
+          <div class="main__control">
+            <button type="button" class="main__button button__toggle">
+              Start Analytics
+            </button>
+            <p class="control__help">
+              Click 'Start' to begin collecting analytics
+            </p>
           </div>
 
-          <div class="display-info__tab-time">
-            <label class="display-info__label label-tab-time">
-              Time you spent today in this tab
-            </label>
-            <div class="display-info display-tab-time">
-              There is no data yet
+          <!-- 2 -->
+          <div class="main__display-info">
+            <div class="display-info__time">
+              <label class="display-info__label label-time">
+                All the time you spent today in the browser
+              </label>
+              <div class="display-info display-time">There is no data yet</div>
+            </div>
+
+            <div class="display-info__tab-time">
+              <label class="display-info__label label-tab-time">
+                Time you spent today in this tab
+              </label>
+              <div class="display-info display-tab-time">
+                There is no data yet
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- 3 -->
-        <section class="main__utils">
-          <button type="button" class="main__button button__del">
-            Delete Data
-          </button>
-          <button type="button" class="main__button button__get-json">
-            Get JSON
-          </button>
-          <button type="button" class="main__button button__get-csv">
-            Get CSV
-          </button>
+        <!-- Statistics -->
+        <section class="tab-content tab-content__statistics">
+          <div class="statistics">
+            <!-- Scroll-depth -->
+            <div class="scroll-depth__statistic">
+              <label class="statistic__label label-scroll-depth">
+                Your current scroll depth
+              </label>
+              <div class="statistic-info display-scroll-depth">
+                There is no data yet
+              </div>
+            </div>
+
+            <!-- Clicks -->
+            <div class="clicks__statistic">
+              <label class="statistic__label label-clicks">
+                Your number of keystrokes on this page
+              </label>
+              <div class="statistic-info display-clicks">
+                There is no data yet
+              </div>
+            </div>
+
+            <!-- Keydown -->
+            <div class="keydown__statistic">
+              <label class="statistic__label label-keydown">
+                Your last click location
+              </label>
+              <div class="statistic-info display-keydown">
+                There is no data yet
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Options -->
+        <section class="tab-content tab-content__options">
+          <h3>Options</h3>
+          <p>настройки</p>
+
+          <div class="main__utils">
+            <button type="button" class="main__button button__del">
+              Delete Data
+            </button>
+            <button type="button" class="main__button button__get-json">
+              Get JSON
+            </button>
+            <button type="button" class="main__button button__get-csv">
+              Get CSV
+            </button>
+          </div>
+
+          <footer>
+            <a href="options.html" target="_blank">Options</a>
+          </footer>
         </section>
       </main>
-
-      <footer class="popup__footer">
-        <a href="options.html" target="_blank">Options</a>
-      </footer>
     </div>
 
     <script type="module" src="./popup.js"></script>

@@ -11,8 +11,16 @@ export function formatTime(ms) {
 }
 
 export function getTimePreset() {
-  const startOfDay = new Date().setHours(0, 0, 0, 0);
-  const endOfDay = new Date().setHours(23, 59, 59, 999);
+  const now = new Date();
 
-  return { startOfDay, endOfDay };
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(now);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  return {
+    startOfDay: startOfDay.getTime(),
+    endOfDay: endOfDay.getTime(),
+  };
 }

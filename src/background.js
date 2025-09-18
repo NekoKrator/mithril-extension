@@ -3,6 +3,7 @@ import {
   upsertPage,
   getTotalTimeForTab,
   getTotalTimeAllTabsToday,
+  getStatistic,
 } from './storage.js';
 import { formatTime, getTimePreset } from './utils/time.js';
 import { registerEventListeners } from './scripts/eventDispatcher.js';
@@ -112,6 +113,11 @@ export async function logging() {
     { currentWindow: true, active: true },
     async function (tabs) {
       if (!tabs || tabs.length === 0) return;
+
+      const { startOfDay, endOfDay } = getTimePreset();
+      await getStatistic(tabs[0].id, startOfDay, endOfDay).then((stat) =>
+        console.dir(stat)
+      );
 
       await logTodayTimeForTab(tabs[0].id);
     }

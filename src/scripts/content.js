@@ -62,8 +62,6 @@ window.addEventListener('beforeunload', () => {
   });
 });
 
-// document.addEventListener('scroll', handleScroll);
-
 document.addEventListener(
   'scroll',
   debounce(() => {

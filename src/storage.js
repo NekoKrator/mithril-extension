@@ -1,5 +1,5 @@
 const dbName = 'ActivityAnalyticsDB';
-const dbVersion = 3;
+const dbVersion = 4;
 
 export function openDatabase() {
   return new Promise((resolve, reject) => {
@@ -21,14 +21,18 @@ export function openDatabase() {
           keyPath: 'id',
           autoIncrement: true,
         });
-
         store.createIndex('tabId', 'tabId', { unique: false });
         store.createIndex('ts', 'ts', { unique: false });
+        store.createIndex('type', 'type', { unique: false });
+      } else {
+        const store = request.transaction.objectStore('eventStore');
+        if (!store.indexNames.contains('type')) {
+          store.createIndex('type', 'type', { unique: false });
+        }
       }
 
       if (!db.objectStoreNames.contains('pagesStore')) {
         const store = db.createObjectStore('pagesStore', { keyPath: 'pageId' });
-
         store.createIndex('url', 'url', { unique: true });
       }
     };
@@ -38,7 +42,63 @@ export function openDatabase() {
 export async function saveEvent(event) {
   const db = await openDatabase();
   const tx = db.transaction(['eventStore'], 'readwrite');
-  tx.objectStore('eventStore').add(event);
+
+  tx.objectStore('eventStore').put({
+    ...event,
+    ts: event.ts || Date.now(),
+  });
+}
+
+export async function getAllEvents() {
+  const db = await openDatabase();
+  return new Promise((resolve) => {
+    const tx = db.transaction('eventStore', 'readonly');
+    const store = tx.objectStore('eventStore');
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+export async function getEventsByType(type) {
+  const db = await openDatabase();
+  return new Promise((resolve) => {
+    const tx = db.transaction('eventStore', 'readonly');
+    const store = tx.objectStore('eventStore').index('type');
+    const req = store.getAll(type);
+    req.onsuccess = () => resolve(req.result);
+  });
+}
+
+export async function clearOldEvents(days = 30) {
+  const db = await openDatabase();
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  return new Promise((resolve) => {
+    const tx = db.transaction('eventStore', 'readwrite');
+    const store = tx.objectStore('eventStore');
+    const index = store.index('ts');
+    const range = IDBKeyRange.upperBound(cutoff);
+
+    const req = index.openCursor(range);
+    req.onsuccess = (event) => {
+      const cursor = event.target.result;
+      if (cursor) {
+        store.delete(cursor.primaryKey);
+        cursor.continue();
+      }
+    };
+
+    tx.oncomplete = () => resolve(true);
+  });
+}
+
+export async function clearAllEvents() {
+  const db = await openDatabase();
+  const tx = db.transaction(['eventStore'], 'readwrite');
+  tx.objectStore('eventStore').clear();
+  return new Promise((resolve) => {
+    tx.oncomplete = () => resolve(true);
+  });
 }
 
 export async function upsertPage(url, title, deltaTime = 0) {
@@ -50,7 +110,6 @@ export async function upsertPage(url, title, deltaTime = 0) {
 
   req.onsuccess = () => {
     const existing = req.result;
-
     if (existing) {
       existing.totalActiveTime = (existing.totalActiveTime || 0) + deltaTime;
       existing.lastSeen = Date.now();
@@ -70,7 +129,6 @@ export async function upsertPage(url, title, deltaTime = 0) {
 
 export async function getTotalTimeForTab(tabId, startTs, endTs) {
   const db = await openDatabase();
-
   return new Promise((resolve) => {
     const tx = db.transaction('eventStore', 'readonly');
     const store = tx.objectStore('eventStore');
@@ -87,7 +145,6 @@ export async function getTotalTimeForTab(tabId, startTs, endTs) {
             e.userActive !== false
         )
         .reduce((sum, e) => sum + (e.active_time_ms || 0), 0);
-
       resolve(totalMs);
     };
   });
@@ -95,7 +152,6 @@ export async function getTotalTimeForTab(tabId, startTs, endTs) {
 
 export async function getTotalTimeAllTabsToday() {
   const db = await openDatabase();
-
   const now = new Date();
   const startOfDay = new Date(
     now.getFullYear(),
@@ -119,42 +175,30 @@ export async function getTotalTimeAllTabsToday() {
             e.userActive !== false
         )
         .reduce((sum, e) => sum + (e.active_time_ms || 0), 0);
-
       resolve(totalMs);
     };
   });
 }
 
-export async function clearData() {
-  const db = await openDatabase();
-  const tx = db.transaction(['eventStore'], 'readwrite');
-  const store = tx.objectStore('eventStore');
-  const req = store.clear();
-
-  req.onsuccess = function () {
-    console.log(`Object store cleared.`);
-  };
-
-  req.onerror = function (event) {
-    console.error(`Error clearing object store:`, event.target.error);
-  };
-
-  tx.oncomplete = function () {
-    db.close();
-  };
-
-  req.onsuccess = () => {
-    console.log('Data was deleted');
-  };
-}
-
-export async function getAllEvents() {
+export async function getStatistic(tabId, startTs, endTs) {
   const db = await openDatabase();
 
   return new Promise((resolve) => {
     const tx = db.transaction('eventStore', 'readonly');
     const store = tx.objectStore('eventStore');
     const req = store.getAll();
-    req.onsuccess = () => resolve(req.result);
+
+    req.onsuccess = () => {
+      const stats = req.result.filter(
+        (e) =>
+          (e.type === 'scroll_depth_%' ||
+            e.type === 'keydown' ||
+            e.type === 'click') &&
+          e.tabId === tabId &&
+          e.ts >= startTs &&
+          e.ts <= endTs
+      );
+      resolve(stats);
+    };
   });
 }

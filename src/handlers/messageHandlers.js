@@ -25,7 +25,8 @@ export default async function handleRuntimeMessage(event, sender) {
       saveEvent({
         type: 'page_view',
         ts: Date.now(),
-        page: event.page,
+        url: event.page.url,
+        title: event.page.title,
       });
 
       upsertPage(event.page.url, event.page.title);
@@ -57,13 +58,37 @@ export default async function handleRuntimeMessage(event, sender) {
     case 'scroll_depth_%':
       console.log(event);
 
+      saveEvent({
+        type: 'scroll_depth_%',
+        ts: Date.now(),
+        percent: Math.min(event.value, 100),
+        tabId: sender?.tab?.id ?? null,
+      });
+
       break;
     case 'click':
       console.log(event);
 
+      saveEvent({
+        type: 'click',
+        ts: Date.now(),
+        tag: event.tag,
+        tagId: event.id || null,
+        classes: event.classes || null,
+        x: event.x,
+        y: event.y,
+        tabId: sender?.tab?.id ?? null,
+      });
+
       break;
     case 'keydown':
       console.log(event);
+
+      saveEvent({
+        type: 'keydown',
+        ts: Date.now(),
+        tabId: sender?.tab?.id ?? null,
+      });
 
       break;
   }

@@ -1,9 +1,10 @@
 import { formatTime, getTimePreset } from './utils/time.js';
 import {
-  clearData,
+  clearAllEvents,
   getTotalTimeAllTabsToday,
   getTotalTimeForTab,
   getAllEvents,
+  getStatistic,
 } from './storage.js';
 
 function getCurrentTabId() {
@@ -27,6 +28,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   const displayTabTime = document.querySelector('.display-tab-time');
 
   const activityStatus = document.querySelector('.header__status');
+
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+
+  const scrollDepth = document.querySelector('.display-scroll-depth');
+  const clicks = document.querySelector('.clicks');
+  const keydown = document.querySelector('.keydown');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+
+      tabs.forEach((t) => t.classList.remove('active'));
+      contents.forEach((c) => c.classList.remove('active'));
+
+      tab.classList.add('active');
+      document.querySelector(`.tab-content__${target}`).classList.add('active');
+    });
+  });
 
   async function getFeatureEnabled() {
     return new Promise((resolve) => {
@@ -170,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   delDataBtn.addEventListener('click', async () => {
     if (confirm('Are you sure you want to delete all data?')) {
-      await clearData();
+      await clearAllEvents();
       displayTime.textContent = '0:00:00';
       displayTabTime.textContent = '0:00:00';
       console.log('Data cleared');
@@ -179,4 +199,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   getJsonDataBtn.addEventListener('click', exportJSON);
   getCsvDataBtn.addEventListener('click', exportCsv);
+
+  document.addEventListener('scroll', () => {
+    // const tabId = getCurrentTabId();
+    // const { startOfDay, endOfDay } = getTimePreset();
+    // const statistics = await getStatistic(tabId, startOfDay, endOfDay);
+
+    console.log('scrolled');
+  });
 });
